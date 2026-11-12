@@ -124,7 +124,8 @@
       name: 'Stephen French',
       username: 'flame@tysonmediagroup.org',
       slug: 'flame',
-      aliases: ['flame@tysonmediagroup.org', 'flame'],
+      staffId: '101',
+      aliases: ['flame@tysonmediagroup.org', 'flame', '101'],
       passwordHashes: ['b5721c15816b6a87b238a2565d38772814857d050a262d0186680214b3c773c5'],
       team: 'Y',
       badge: 'TYSON Team',
@@ -136,13 +137,14 @@
       defaultCoverUrl: '/assets/tyson-t5s-login-backdrop.jpg',
       role: 'TYSON Team Member',
       division: 'TYSON Atlantis / Creative Direction',
-      bio: 'Official myTYSON profile for Stephen French.'
+      bio: 'Official MyTYSON profile for Stephen French.'
     },
     {
       name: 'Tyler Custine',
       username: 't@tysonmediagroup.org',
       slug: 't',
-      aliases: ['t@tysonmediagroup.org', 't', 'ty', 'ty@tysonmediagroup.org'],
+      staffId: '100',
+      aliases: ['t@tysonmediagroup.org', 't', 'ty', 'ty@tysonmediagroup.org', '100'],
       passwordHashes: ['3745b1327b96c9c6ede767ee79e2b8907c3fdba31fb6c8fb6bb8e76cb0525f92'],
       team: 'Y',
       badge: 'TYSON Team',
@@ -154,7 +156,7 @@
       defaultCoverUrl: '/assets/atlantis-sunset.jpg',
       role: 'Founder & Executive Lead',
       division: 'TYSON Media Group / Core Systems',
-      bio: 'Official myTYSON profile for Tyler Custine.',
+      bio: 'Official MyTYSON profile for Tyler Custine.',
       isPowerAdmin: true
     },
     {
@@ -162,7 +164,8 @@
       username: 'tyson@tysonmediagroup.org',
       loginId: 'tyson',
       slug: 'tyson',
-      aliases: ['tyson', 'tyson@tysonmediagroup.org'],
+      staffId: '000',
+      aliases: ['tyson', 'tyson@tysonmediagroup.org', '000'],
       passwordHashes: ['b6cbc904b5abaf19a634bd6acc4ed9093f8034366a04f8356c0f60ff3cbd966d'],
       team: 'Y',
       badge: 'Official TYSON Account',
@@ -181,8 +184,12 @@
       name: 'Ash French',
       username: 'a@tysonmediagroup.org',
       slug: 'a',
-      aliases: ['a@tysonmediagroup.org', 'a', 'ash', 'ash@tysonmediagroup.org', 'ashfrench'],
-      passwordHashes: ['7f33322277113c6591fa920fa06c0f5a3c4e4a33715aa0c9fd24c6251f591d19'],
+      staffId: '212',
+      aliases: ['a@tysonmediagroup.org', 'a', 'ash', 'ash@tysonmediagroup.org', 'ashfrench', '212'],
+      passwordHashes: [
+        '7f33322277113c6591fa920fa06c0f5a3c4e4a33715aa0c9fd24c6251f591d19',
+        'cc80314025ba1d4066a53aea66ab45d7e62f700ccdfebaca0044121ad711eba5'
+      ],
       team: 'Y',
       badge: 'TYSON Team',
       badgeClass: 'badge-team',
@@ -193,14 +200,15 @@
       defaultCoverUrl: '/assets/photograph.jpg',
       role: 'TYSON Team Member',
       division: 'TYSON Media Group',
-      bio: 'Official myTYSON profile for Ash French.',
+      bio: 'Official MyTYSON profile for Ash French.',
       isPowerAdmin: true
     },
     {
       name: 'Triston Rinebarger',
       username: 'rpm@tysonmediagroup.org',
       slug: 'rpm',
-      aliases: ['rpm@tysonmediagroup.org', 'rpm'],
+      staffId: '323',
+      aliases: ['rpm@tysonmediagroup.org', 'rpm', '323'],
       passwordHashes: [
         'c3490c62ef1680ccd128e0d57655b85fbb33683ee91f5f4dc3d5ef6a9bb78c17',
         '4f54664f678ba0d7b2069f8853b1998e5c23789fd5d34102f65872935a65cdb3'
@@ -215,13 +223,14 @@
       defaultCoverUrl: '/assets/atlantisplayer_nightgasstation1.jpg',
       role: 'TYSON Team Member',
       division: 'TYSON RPM / Operations',
-      bio: 'Official myTYSON profile for Triston Rinebarger.'
+      bio: 'Official MyTYSON profile for Triston Rinebarger.'
     },
     {
       name: 'TYSON Support',
       username: 'contact@tysonmediagroup.org',
       slug: 'contact',
-      aliases: ['contact@tysonmediagroup.org', 'contact'],
+      staffId: '007',
+      aliases: ['contact@tysonmediagroup.org', 'contact', '007'],
       passwordHashes: ['5b9b9f6cc4a8e3a8168525e5d875cbeeb66be6a21ac823e459257058887a217c'],
       team: 'Y',
       badge: 'Official Support Account',
@@ -233,7 +242,7 @@
       defaultCoverUrl: '/assets/tyson-t5s-login-backdrop.jpg',
       role: 'Official Support Channel',
       division: 'TYSON Support & Communications',
-      bio: 'Official myTYSON support and contact account.'
+      bio: 'Official MyTYSON support and contact account.'
     },
     {
       name: 'Jake Gantt',
@@ -389,6 +398,7 @@
     copy.slug = cleanSlug;
     copy.team = isStaff ? 'Y' : 'N';
     copy.username = formatAccountUsername(cleanSlug, isStaff);
+    if (acc.staffId) copy.staffId = String(acc.staffId);
     return copy;
   }
 
@@ -418,6 +428,7 @@
       var acc = all[i];
       if (acc.slug && acc.slug.toLowerCase() === stripped) return acc;
       if (acc.username && acc.username.toLowerCase() === clean) return acc;
+      if (acc.staffId && String(acc.staffId).toLowerCase() === clean) return acc;
       if (acc.aliases && acc.aliases.some(function (a) { return (a || '').toLowerCase() === clean; })) return acc;
     }
     return null;
@@ -687,10 +698,13 @@
     if (!session) return null;
     var isStaff = isStaffMember(session);
     var cleanSlug = (session.slug || session.username || '').toLowerCase().replace(/@tysonmediagroup\.org$/i, '').trim();
+    var acc = findAccount(cleanSlug);
+    var staffId = session.staffId || (acc && acc.staffId) || '';
     var normalized = Object.assign({}, session, {
       slug: cleanSlug,
       username: formatAccountUsername(cleanSlug, isStaff),
-      team: isStaff ? 'Y' : 'N'
+      team: isStaff ? 'Y' : 'N',
+      staffId: staffId
     });
     var raw = JSON.stringify(normalized);
     try {
@@ -707,6 +721,7 @@
       name: acc.name,
       username: formatAccountUsername(cleanSlug, isStaff),
       slug: cleanSlug,
+      staffId: acc.staffId || '',
       team: isStaff ? 'Y' : 'N',
       badge: acc.badge || (isStaff ? 'TYSON Team' : 'Standard Member'),
       hasTysonBadge: acc.hasTysonBadge !== undefined ? !!acc.hasTysonBadge : isStaff,

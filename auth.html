@@ -325,11 +325,20 @@
           domain: 'power.administration.tysonmediagroup.org',
           logo: '/assets/TYSONPowerAdminBanner.png',
           fallbackUrl: (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8098/' : 'https://power.administration.tysonmediagroup.org/'
+        },
+        passwords: {
+          name: 'TYSON Passwords Vault',
+          domain: 'passwords.tysonmediagroup.org',
+          logo: '/assets/TYSONSoftwareBanner.png',
+          fallbackUrl: (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8100/' : 'https://passwords.tysonmediagroup.org/'
         }
       };
 
       function detectAppConfig() {
         var checkStr = (appParam + ' ' + redirectParam + ' ' + (document.referrer || '')).toLowerCase();
+        if (checkStr.indexOf('password') !== -1 || appParam === 'passwords' || checkStr.indexOf(':8100') !== -1) {
+          return APP_BRANDING.passwords;
+        }
         if (checkStr.indexOf('poweradmin') !== -1 || checkStr.indexOf('administration') !== -1 || checkStr.indexOf('power') !== -1 || appParam === 'poweradmin' || appParam === 'administration' || checkStr.indexOf(':8098') !== -1) {
           return APP_BRANDING.poweradmin;
         }
