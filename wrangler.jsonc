@@ -1,0 +1,26 @@
+{
+  "name": "auth-my-tysonmediagroup-org",
+  "main": "worker.js",
+  "compatibility_date": "2025-11-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1,
+    "logs": {
+      "enabled": true
+    },
+    "traces": {
+      "enabled": true
+    }
+  },
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS"
+  },
+  "services": [
+    {
+      "binding": "MYTYSON_API",
+      "service": "my-tysonmediagroup-org"
+    }
+  ]
+}
